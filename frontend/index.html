@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Portfolio</title>
+    <style>
+        /* Modern Design System */
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --accent: #22d3ee;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            margin: 0; 
+            padding: 40px 20px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header { text-align: center; margin-bottom: 50px; }
+        h1 { 
+    font-size: 2.5rem; 
+    margin-bottom: 10px; 
+    background: linear-gradient(to right, var(--primary), var(--accent)); 
+    
+    /* Order matters: prefix first, then standard */
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    
+    -webkit-text-fill-color: transparent;
+    /* Optional: fallback for very old browsers */
+    color: var(--primary); 
+}
+
+        /* Dynamic Grid Layout */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* Project Card with Interaction */
+        .project-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; 
+            transform: translateY(30px);
+        }
+
+        .project-card.visible { opacity: 1; transform: translateY(0); }
+
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .tech-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        /* Form Styling */
+        .contact-section { 
+            width: 100%; 
+            max-width: 600px; 
+            margin-top: 80px;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        input, textarea {
+            width: 100%; 
+            padding: 14px; 
+            margin-bottom: 15px;
+            background: #0f172a; 
+            border: 1px solid #334155;
+            border-radius: 8px; 
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus { border-color: var(--primary); }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; 
+            border: none;
+            padding: 15px; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-weight: bold; 
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #475569; cursor: not-allowed; }
+
+        #form-status { margin-top: 15px; font-weight: 500; }
+
+        /* Loading Spinner */
+        .loader {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            font-style: italic;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SRI JAGADGURU RENUKACHARYA COLLEGE OF ARTS SCIENCE AND COMMERCE</h1>
+        <p>Interactive display of technical expertise</p>
+    </header>
+
+    <div id="projects-container" class="projects-grid">
+        <div class="loader">Loading dynamic content...</div>
+    </div>
+
+    <section class="contact-section">
+        <h2>Login Details</h2>
+        <form id="contact-form">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email Address" required>
+            <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit" id="submit-btn">Send Message</button>
+        </form>
+        <div id="form-status"></div>
+    </section>
+
+    <script>
+        // 1. Project Data (Easily update this array to change your site)
+        const projects = [
+            { title: "Neural Network Viz", tech: "Python / JS", desc: "Real-time visualization of weight adjustments during training." },
+            { title: "Eco-Tracker App", tech: "React Native", desc: "Mobile application to track and offset carbon footprints." },
+            { title: "Crypto Dashboard", tech: "Next.js / API", desc: "Live market tracking with WebSocket integration." },
+            { title: "Portfolio 3.0", tech: "HTML / CSS / JS", desc: "A fully dynamic, high-performance web portfolio." }
+        ];
+
+        const container = document.getElementById('projects-container');
+
+        // 2. Dynamic Injection with Animation
+        function initPortfolio() {
+            container.innerHTML = ''; // Clear the loader
+            
+            projects.forEach((item, index) => {
+                // Create element
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <span class="tech-tag">${item.tech}</span>
+                    <h3>${item.title}</h3>
+                    <p>${item.desc}</p>
+                `;
+                container.appendChild(card);
+
+                // Trigger entrance animation with a staggered delay
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 150); 
+            });
+        }
+
+        // 3. Interactive Form Handling
+        const contactForm = document.getElementById('contact-form');
+        const statusMsg = document.getElementById('form-status');
+        const btn = document.getElementById('submit-btn');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // UI Feedback
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+            statusMsg.style.color = "var(--accent)";
+            statusMsg.innerText = "Attempting to send message...";
+
+            // Simulate API interaction
+            setTimeout(() => {
+                statusMsg.style.color = "#4ade80";
+                statusMsg.innerText = "✓ Message delivered successfully!";
+                btn.innerText = "Sent!";
+                contactForm.reset();
+            }, 2000);
+        });
+
+        // Initialize on load
+        window.onload = () => {
+            // Artificial delay to simulate "fetching" data
+            setTimeout(initPortfolio, 800);
+        };
+    </script>
+</body>
+</html>
